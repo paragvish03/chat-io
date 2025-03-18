@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc", 
+    "start": "node dist/index.js", 
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -15,16 +17,17 @@
     "@types/node": "^22.13.10",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
-    "nodemon": "^3.1.9",
     "socket.io": "^4.8.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.8",
-    "@types/jsonwebtoken": "^9.0.9"
+    "@types/jsonwebtoken": "^9.0.9",
+    "nodemon": "^3.1.9"
   }
 }

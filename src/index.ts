@@ -1,12 +1,12 @@
+import cookieParser from "cookie-parser";
 import express from "express";
+import cors from "cors";
 import jwt from "jsonwebtoken";
 import { createServer } from "node:http";
 import { join } from "node:path";
 import { Server } from "socket.io";
-import cookieParser from "cookie-parser";
-import cookie from "cookie";
-import authRouter from "./router";
 import history from "./model/history";
+import authRouter from "./router";
 require("../config/db");
 
 const port = 3030;
@@ -18,15 +18,15 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(authRouter);
+app.use(cors());
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "public/login.html"));
 });
 
 io.on("connection", (socket) => {
   const cookies = socket.handshake.headers.cookie;
-  const parsedCookies = cookies?.split("=");
+  const parsedCookies = cookies?.split("authToken=");
   const token = parsedCookies?.length ? parsedCookies[1] : null;
-
   if (token) {
     jwt.verify(token, "JWT_SECRET_KEY", async (err, decoded) => {
       if (err) {
@@ -42,7 +42,10 @@ io.on("connection", (socket) => {
 
       socket.emit("load old messages", oldMessages);
       socket.emit("user enter", (socket as any).user.userName);
-      console.log(`User ${(socket as any).user.userName} connected`, oldMessages);
+      console.log(
+        `User ${(socket as any).user.userName} connected`,
+        oldMessages
+      );
     });
   } else {
     socket.disconnect();
@@ -74,7 +77,7 @@ io.on("connection", (socket) => {
 
   //for delete
   socket.on("delete message", (msgData) => {
-    history.findByIdAndDelete(msgData._id, (err:any) => {
+    history.findByIdAndDelete(msgData._id, (err: any) => {
       if (err) {
         console.error(err);
         return;
