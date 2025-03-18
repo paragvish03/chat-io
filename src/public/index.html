@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Chat Container Styling */
+        .chat-container {
+            background-color: #ffffff;
+            width: 350px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header Section */
+        .chat-header {
+            background-color: #4CAF50;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* Message List Styling */
+        .message-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Transparent Background for User Enter */
+        .transparent-background {
+            background-color: white;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Input Area Styling */
+        .input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+            background-color: #fafafa;
+        }
+
+        #message-input {
+            flex-grow: 1;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #message-input:focus {
+            border-color: #4CAF50;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 400px) {
+            .chat-container {
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+            }
+
+            #message-input {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Represent Messenger Room</div>
+        <ul id="messages" class="message-list"></ul>
+        <div class="input-area">
+            <input id="message-input" autocomplete="off" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Load old messages
+        socket.on('load old messages', function (oldMessages) {
+            oldMessages.forEach(msg => {
+                const li = document.createElement('li');
+                li.classList.add('message');
+                li.textContent = `${msg.message}, ${msg.from.userName}`;
+                document.getElementById('messages').appendChild(li);
+            });
+        });
+
+        // Listen for new chat messages
+        socket.on('chat message', function (msg) {
+            const li = document.createElement('li');
+            li.classList.add('message');
+            li.textContent = `${msg.message}, ${msg.userName}`;
+            document.getElementById('messages').appendChild(li);
+        });
+
+        // User enters the chat
+        socket.on('user enter', function (user) {
+            const li = document.createElement('li');
+            li.classList.add('message', 'transparent-background'); // Apply transparent background
+            li.textContent = `${user} enter`;
+            document.getElementById('messages').appendChild(li);
+            // setTimeout(() => {
+            //     li.style.display= 'none';
+            // }, 3000);
+        });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            if (message) {
+                socket.emit('chat message', message);
+                messageInput.value = '';
+            }
+        }
+    </script>
+</body>
+
+</html>
