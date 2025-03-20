@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express from "express";
+import express, { Request, Response } from "express";
 import { createServer } from "node:http";
 import { join } from "node:path";
 import authRouter from "./router";
@@ -16,8 +16,8 @@ app.use(cookieParser());
 app.use(authRouter);
 app.use(chatRouter);
 app.use(cors());
-app.get("/", (req, res) => {
-  res.sendFile(join(__dirname, "../public/login.html"));
+app.get("/", (req: Request, res: Response) => {
+  return res.sendFile(join(__dirname, "../public/login.html"));
 });
 
 server.listen(port, () => {

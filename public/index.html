@@ -113,6 +113,13 @@
         button:hover {
             background-color: #45a049;
         }
+        #typing-indicator {
+            font-style: italic;
+            color: #777;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            text-align: center;
+        }
 
         /* Responsive Adjustments */
         @media (max-width: 400px) {
@@ -133,6 +140,7 @@
     <div class="chat-container">
         <div class="chat-header">Represent Messenger Room</div>
         <ul id="messages" class="message-list"></ul>
+        <div id="typing-indicator"></div>
         <div class="input-area">
             <input id="message-input" autocomplete="off" placeholder="Type a message...">
             <button onclick="sendMessage()">Send</button>
@@ -141,11 +149,10 @@
 
     <script src="https://cdn.ably.io/lib/ably.min-1.2.js"></script>
     <script>
-        const ably = new Ably.Realtime('m_Wxmw.8Rrd9g:CQMft-_sxoTwLDkfJLgUr0kCHEm_aeTewhUDbWVmu4k'); // Replace with your Ably API key
-        const channel = ably.channels.get('chat-channel'); // Same channel name as the server
+        const ably = new Ably.Realtime('m_Wxmw.8Rrd9g:CQMft-_sxoTwLDkfJLgUr0kCHEm_aeTewhUDbWVmu4k'); 
+        const channel = ably.channels.get('chat-channel'); 
         // Load old messages
-        let old = []
-        const x = fetch('/chat-history')
+        fetch('/chat-history')
             .then(response => response.json())
             .then(oldMessages => {
                 oldMessages.forEach(msg => {
@@ -169,6 +176,27 @@
             li.textContent = `${user.data} joined`;
             document.getElementById('messages').appendChild(li);
         });
+        let username = getCookie('username');
+        let typingTimeout;
+        const typingDelay = 2500;
+
+        document.getElementById('message-input').addEventListener('input', function () {
+            clearTimeout(typingTimeout);
+            channel.publish('typing', { userName: username });
+
+            typingTimeout = setTimeout(() => {
+                channel.publish('typing', { userName: '' });
+            }, typingDelay);
+        });
+
+        channel.subscribe('typing', (msg) => {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (msg.data.userName && msg.data.userName !== username) {
+                typingIndicator.textContent = `${msg.data.userName} is typing...`;
+            } else {
+                typingIndicator.textContent = '';
+            }
+        });
 
         function sendMessage() {
             const messageInput = document.getElementById('message-input');
@@ -186,6 +214,11 @@
                     }
                 });
             }
+        }
+        function getCookie(name) {
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookies = decodedCookie.split('userName=');
+            return cookies.length ? cookies[1] : null;
         }
     </script>
 </body>
