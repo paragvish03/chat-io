@@ -16,18 +16,5 @@ This is a chat messenger application with several exciting features designed to 
 - **Description**: Simplified access to chat rooms makes it easy for users to join different conversations.
 - **Functionality**: Users can quickly join rooms via direct invitations, links, or by browsing an accessible room list. The app provides room categories, filters, and a "recent rooms" feature to help users navigate effortlessly.
 
-## Installation
-
-(Include instructions for how to install and set up the project, e.g., dependencies, environment setup, etc.)
-
 ## Usage
-
-(Provide instructions for how to use the features within the chat messenger.)
-
-## Contributing
-
-(Include guidelines on how others can contribute to the project.)
-
-## License
-
-(Include license information for your project.)
+- **url**: https://chat-room-alpha-virid.vercel.app/get-in
