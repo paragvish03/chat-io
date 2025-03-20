@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(authRouter);
 app.use(cors());
 app.get("/", (req, res) => {
-  res.sendFile(join(__dirname, "public/login.html"));
+  res.sendFile(join(__dirname, "../public/login.html"));
 });
 
 io.on("connection", (socket) => {

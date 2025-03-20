@@ -24,7 +24,7 @@ authRouter.post("/get-in", async (req, res): Promise<any> => {
       httpOnly: true,
       maxAge: 36000000,
     });
-    return res.sendFile(join(__dirname, "../public/index.html"));
+    return res.sendFile(join(__dirname, "../../public/index.html"));
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "something went wrong" });
