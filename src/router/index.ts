@@ -35,8 +35,8 @@ export const verifyToken = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  const token = req.cookies.authToken; // Get token from cookies
+): any => {
+  const token = req.cookies.authToken || req.headers["auth"]; 
 
   if (!token) {
     return res.status(403).send("No token provided");
@@ -48,9 +48,11 @@ export const verifyToken = (
     }
 
     req.user = decoded;
+    console.log(decoded, "coded");
     next();
   });
 };
+
 export const generateToken = (
   userName: string,
   id: mongoose.Types.ObjectId

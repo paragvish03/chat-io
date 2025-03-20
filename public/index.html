@@ -59,8 +59,9 @@
             padding: 10px;
             margin: 5px 0;
             border-radius: 5px;
-            font-size: 0.9rem;
-            color: #333;
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: #0d0d0d;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
@@ -138,45 +139,52 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.ably.io/lib/ably.min-1.2.js"></script>
     <script>
-        const socket = io();
-
+        const ably = new Ably.Realtime('m_Wxmw.8Rrd9g:CQMft-_sxoTwLDkfJLgUr0kCHEm_aeTewhUDbWVmu4k'); // Replace with your Ably API key
+        const channel = ably.channels.get('chat-channel'); // Same channel name as the server
         // Load old messages
-        socket.on('load old messages', function (oldMessages) {
-            oldMessages.forEach(msg => {
-                const li = document.createElement('li');
-                li.classList.add('message');
-                li.textContent = `${msg.message}, ${msg.from.userName}`;
-                document.getElementById('messages').appendChild(li);
+        let old = []
+        const x = fetch('/chat-history')
+            .then(response => response.json())
+            .then(oldMessages => {
+                oldMessages.forEach(msg => {
+                    const li = document.createElement('li');
+                    li.classList.add('message');
+                    li.textContent = `${msg.from.userName}: ${msg.message}`;
+                    document.getElementById('messages').appendChild(li);
+                });
             });
-        });
 
-        // Listen for new chat messages
-        socket.on('chat message', function (msg) {
+        channel.subscribe('chat message', (msg) => {
             const li = document.createElement('li');
             li.classList.add('message');
-            li.textContent = `${msg.message}, ${msg.userName}`;
+            li.textContent = `${msg.data.userName}: ${msg.data.message}`;
             document.getElementById('messages').appendChild(li);
         });
 
-        // User enters the chat
-        socket.on('user enter', function (user) {
+        channel.subscribe('user joined', function (user) {
             const li = document.createElement('li');
-            li.classList.add('message', 'transparent-background'); // Apply transparent background
-            li.textContent = `${user} enter`;
+            li.classList.add('message', 'transparent-background');
+            li.textContent = `${user.data} joined`;
             document.getElementById('messages').appendChild(li);
-            // setTimeout(() => {
-            //     li.style.display= 'none';
-            // }, 3000);
         });
 
         function sendMessage() {
             const messageInput = document.getElementById('message-input');
             const message = messageInput.value;
             if (message) {
-                socket.emit('chat message', message);
-                messageInput.value = '';
+                fetch('/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                }).then(response => {
+                    if (response.ok) {
+                        messageInput.value = '';
+                    }
+                });
             }
         }
     </script>

@@ -1,23 +1,19 @@
 {
-    "builds": [
-      {
-        "src": "frontend/**/*",
-        "use": "@vercel/static"
-      },
-      {
-        "src": "src/index.ts",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/public/$1"
-      },
-      {
-        "src": "/api/(.*)",
-        "dest": "/api/$1"
-      }
-    ]
-  }
-  
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/**",        
+      "use": "@vercel/static"
+    },
+    {
+      "src": "src/index.ts",    
+      "use": "@vercel/node"      
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",           
+      "dest": "/src/index.ts"    
+    }
+  ]
+}
