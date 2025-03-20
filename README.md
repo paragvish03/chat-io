@@ -17,4 +17,4 @@ This is a chat messenger application with several exciting features designed to 
 - **Functionality**: Users can quickly join rooms via direct invitations, links, or by browsing an accessible room list. The app provides room categories, filters, and a "recent rooms" feature to help users navigate effortlessly.
 
 ## Usage
-- **url**: https://chat-room-alpha-virid.vercel.app/get-in
+- **url**: https://chat-room-alpha-virid.vercel.app/
