@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc", 
+    "build": "tsc && npm run build:frontend", 
+    "build:frontend": "xcopy /E /I frontend\\* public\\", 
     "start": "ts-node src/index.ts",  
     "test": "echo \"Error: no test specified\" && exit 1"
   },
